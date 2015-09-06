@@ -1,6 +1,15 @@
 # nwogatewaybot
 PHP–based Neverwinter gateway bot — daemon service to get data from Neverwinter [gateway](http://gateway.playneverwinter.com).
 
+## Foretaste
+Taking companions using nwogatewaybot:
+```php
+$StickerBook = $gateway-> get('Client_RequestStickerBook', array(
+	'id'		=>	'Companion',
+	'params'	=>	array(),
+), 'Proxy_StickerBook');
+```
+
 ## Requirements
 * PHP at `/usr/bin/php`
 * crontab*
@@ -223,6 +232,43 @@ Creates simple table that shows guild members online.
 ```bash
 * * * * *   cd /usr/bin/nwogatewaybot && ([ -e tasks/Guild_status.task.php ] || cp /home/nwostatus/Guild_status.task.php tasks/611-Guild_status)
 ```
+
+### Guild members
+Show the full information site about guild.
+
+1. Change `GUILDNAME` to your guild name in line 92 of [Guild_status.task.php](https://github.com/Benio101/nwogatewaybot/blob/master/example/Guild_members.task.php#L92)
+2. Change `/home/nwostatus` to your real path in line 384 of [Guild_status.task.php](https://github.com/Benio101/nwogatewaybot/blob/master/example/Guild_members.task.php#L384)
+3. Add task to crontab, changing `/home/nwostatus` to your real path:
+```bash
+*/2 * * * *   cd /usr/bin/nwogatewaybot && ([ -e tasks/Guild_members.task.php ] || cp /home/nwostatus/Guild_members.task.php tasks/601-Guild_members)
+```
+
+### Info
+Advanced example.
+
+`Info.php` includes three task caches:
+* `Info_companions.cch`
+* `Info_enchants.cch`
+* `Info_zenshop.cch`
+
+`Info_companions.task.php` collects information about companions from collections. Then shows it in a simple table.<br>
+`Info_enchants.task.php` collects information about available enchantments and runestones, finally showing it in the correspondending tabs.<br>
+`Info_zenshop.task.php` collects information about products in Zen Shop, making a grid–like rich presentation of available products.
+
+All those tasks makes a subrequests to get the tooltips for their items.<br>
+Tooltips are saved inside `/home/nwostatus/tooltip` folder with their corresponding key name.<br>
+All tooltips are also cached to lower the request quantity.
+
+2. Change all occurencies of `/home/nwostatus` to your real path in all above listed files.
+3. Add task to crontab, changing `/home/nwostatus` to your real path:
+```bash
+17 * * * *   cd /usr/bin/nwogatewaybot && ([ -e tasks/Info_companions.task.php ] || cp /home/nwostatus/Info_companions.task.php tasks/271-Info_companions)
+27 * * * *   cd /usr/bin/nwogatewaybot && ([ -e tasks/Info_enchants.task.php ] || cp /home/nwostatus/Info_enchants.task.php tasks/272-Info_enchants)
+37 * * * *   cd /usr/bin/nwogatewaybot && ([ -e tasks/Info_zenshop.task.php ] || cp /home/nwostatus/Info_zenshop.task.php tasks/273-Info_zenshop)
+```
+
+Note that you can simply replace the header resources that corresponds to my current hopepage: //[Benio.me](http://benio.me).
+However, it is important to attach [`/home/nwostatus/tooltip.js`](https://github.com/Benio101/nwogatewaybot/blob/master/example/tooltip.js) file to the final `Info.php` so tooltips can be showed correctly.<br>
 
 ## Troubleshouting
 ### Syntax checking

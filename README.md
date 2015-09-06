@@ -72,7 +72,7 @@ Example for `foo.task.php` being executed 27 minutes past every hour with a `950
 
 ## Task PHP code
 Let's check if the file is executed internally, we don't wont any additional user–side task requests, only the crontab ones.
-```
+```php
 <?php
 
 if(!defined('STDIN')){
@@ -81,7 +81,7 @@ if(!defined('STDIN')){
 ```
 
 Let's add information about when the last update was made to the upcomming HTML cache file:
-```
+```php
 
 $O = '<h5 class="text-muted text-left">Update: <span class=text-info>__UPDATE__</span></h5>';
 ```
@@ -134,7 +134,7 @@ args
 In this case, `Client_REQUESTID` is a `Client_RequestExchangeAccountData`, `SUBREQID` is an account id and `Proxy_RESPONSEID` is a `Proxy_ExchangeAccountData`.
 
 Then, we add the following bot request:
-```
+```php
 $data = $gateway-> get('Client_REQUESTID', array(
 	'id'		=>	'SUBREQID',
 	'params'	=>	array(),
@@ -142,7 +142,7 @@ $data = $gateway-> get('Client_REQUESTID', array(
 ```
 
 In our case, this will be a
-```
+```php
 $data = $gateway-> get('Client_RequestExchangeAccountData', array(
 	'id'		=>	'ACCOUNTID',
 	'params'	=>	array(),
@@ -153,7 +153,7 @@ And thus, `$data->container->globaldata->buyprices` will contain the full list o
 And zeroth entry's `price` will contain current ZEN buy price and its `quantity` contains the amount of ZEN to buy in queue.
 
 This said, we add the following code to our task file:
-```
+```php
 foreach($data->container->globaldata->buyprices as $buyrecords_id => $buyrecords){
 	$O .= 'ZEN buy price: ' .$buyrecords->price .'<br>';
 	$O .= 'Quantity: ' .$buyrecords->quantity .'<br>';
@@ -163,11 +163,11 @@ foreach($data->container->globaldata->buyprices as $buyrecords_id => $buyrecords
 ```
 
 Finally, we replace the header update time with current time:
-```
+```php
 $O = str_replace('__UPDATE__', date('d.m.Y H:i'), $O);
 ```
 and save the cache file to a chosen path:
-```
+```php
 file_put_contents('/path/to/file.cch', $O);
 
 ?>
@@ -176,7 +176,7 @@ file_put_contents('/path/to/file.cch', $O);
 That's all.
 
 Full example `foo.task.php` file:
-```
+```php
 <?php
 
 if(!defined('STDIN')){
@@ -203,7 +203,7 @@ file_put_contents('/path/to/file.cch', $O);
 ?>
 ```
 To show the ZAX info, just simply:
-```
+```php
 echo file_get_contents('/path/to/file.cch');
 ```
 in another PHP, stable file.
@@ -237,7 +237,7 @@ See if everything works fine.
 
 ### Cookies
 After some maintenances, removing cookie cache will be necessary. Type simple:
-```
+```bash
 cat <<< "" > /usr/bin/nwogatewaybot/gateway.cck
 service nwogatewaybot restart
 ```

@@ -70,6 +70,8 @@ Example for `foo.task.php` being executed 27 minutes past every hour with a `950
 27  *  * * *   cd /usr/bin/nwogatewaybot && ([ -e tasks/foo.task.php ] || cp /home/nwostatus/foo.task.php tasks/950-foo)
 ```
 
+It is recommended to edit crontab using `crontab -e`.
+
 ## Task PHP code
 Let's check if the file is executed internally, we don't wont any additional user–side task requests, only the crontab ones.
 ```php
@@ -207,6 +209,20 @@ To show the ZAX info, just simply:
 echo file_get_contents('/path/to/file.cch');
 ```
 in another PHP, stable file.
+
+## Examples
+All examples are assumed to be placed in `/home/nwostatus`.
+If you wish to pull them, remember to change all `/home/nwostatus` paths to your real ones.
+
+### Guild status
+Creates simple table that shows guild members online.
+
+1. Change `GUILDNAME` to your guild name in line 27 of [Guild_status.task.php](https://github.com/Benio101/nwogatewaybot/blob/master/example/Guild_status.task.php#L27)
+2. Change `/home/nwostatus` to your real path in line 64 of [Guild_status.task.php](https://github.com/Benio101/nwogatewaybot/blob/master/example/Guild_status.task.php#L64)
+3. Add task to crontab, changing `/home/nwostatus` to your real path:
+```bash
+* * * * *   cd /usr/bin/nwogatewaybot && ([ -e tasks/Guild_status.task.php ] || cp /home/nwostatus/Guild_status.task.php tasks/611-Guild_status)
+```
 
 ## Troubleshouting
 ### Syntax checking

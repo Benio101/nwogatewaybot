@@ -122,17 +122,17 @@ $guild_ranks = array();
 foreach($ranks as $rank_id => $rank){
 	$perms = array();
 	foreach($rank-> permissions as $perm_id => &$perm){
-		$json = @json_decode(file_get_contents('http://__SITENAME__/nwodb/ClientMessagesEnglish.php?translate=Staticdefine_Guildrankpermissions_' .$perm));
-		if($json-> success){
-			$perm_name = preg_replace('@^{k:guild_title}@suDX', 'Guild', $json-> value);
-			$perm_name = str_replace('{k:guild_title}', 'guild', $perm_name);
-			
-			$perms[]= $perm_name;
-		} else {
+		//$json = @json_decode(file_get_contents('http://__SITENAME__/nwodb/ClientMessagesEnglish.php?translate=Staticdefine_Guildrankpermissions_' .$perm));
+		//if($json-> success){
+		//	$perm_name = preg_replace('@^{k:guild_title}@suDX', 'Guild', $json-> value);
+		//	$perm_name = str_replace('{k:guild_title}', 'guild', $perm_name);
+		//	
+		//	$perms[]= $perm_name;
+		//} else {
 			if($perm != '(null)'){
 				$perms[]= '<span class="text-muted">' .$perm .'</span>';
 			}
-		}
+		//}
 	}
 	
 	array_push($guild_ranks, array(
@@ -236,10 +236,10 @@ foreach($guild_members as &$member){
 HTML;
 	
 	$classname = $member['classtype'];
-	$json = @json_decode(file_get_contents('http://__SITENAME__/nwodb/ClientMessagesEnglish.php?translate=Characterclass.' .$member['classtype'] .'.Displayname'));
-	if($json-> success){
-		$classname = $json-> value;
-	}
+	//$json = @json_decode(file_get_contents('http://__SITENAME__/nwodb/ClientMessagesEnglish.php?translate=Characterclass.' .$member['classtype'] .'.Displayname'));
+	//if($json-> success){
+	//	$classname = $json-> value;
+	//}
 	$member['classname'] = $classname;
 	
 	$seniority = intval((time() - strtotime($member['joined']))/60/60/24);

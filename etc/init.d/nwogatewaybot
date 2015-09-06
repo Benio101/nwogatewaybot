@@ -1,0 +1,119 @@
+#!/bin/bash
+
+APPNAME=nwogatewaybot
+
+spawn(){
+        /usr/bin/php /usr/bin/$APPNAME/$APPNAME.php &> /var/log/$APPNAME/error &
+        echo "$!" > /var/run/$APPNAME.pid
+        echo "$APPNAME spawned (pid=$!)"
+}
+
+start(){
+        if [ -e /var/run/$APPNAME.pid ]
+        then
+                PID=`cat /var/run/$APPNAME.pid`
+                if [ -e /proc/$PID ]
+                then
+                        echo "$APPNAME is already running (pid=$PID)"
+                else
+                        rm /var/run/$APPNAME.pid
+                        echo "$APPNAME zombie killed (pid=$PID)"
+                        spawn
+                fi
+        else
+                spawn
+        fi
+}
+
+stop(){
+        if [ -e /var/run/$APPNAME.pid ]
+        then
+                PID=`cat /var/run/$APPNAME.pid`
+                if [ -e /proc/$PID ]
+                then
+                        kill -9 $PID
+                        rm /var/run/$APPNAME.pid
+                        echo "$APPNAME killed (pid=$PID)"
+                else
+                        rm /var/run/$APPNAME.pid
+                        echo "$APPNAME zombie killed (pid=$PID)"
+                fi
+        else
+                echo "$APPNAME is not running"
+        fi
+}
+
+status(){
+        if [ -e /var/run/$APPNAME.pid ]
+        then
+                PID=`cat /var/run/$APPNAME.pid`
+                if [ -e /proc/$PID ]
+                then
+                        echo "$APPNAME is running (pid=$PID)"
+                else
+                        echo "$APPNAME is zombie (pid=$PID)"
+                fi
+
+        else
+                echo "$APPNAME is not running"
+        fi
+
+        TASKS=`ls -l /usr/bin/$APPNAME/tasks | tail -n +2 | wc -l`
+        if [ "$TASKS" -gt 3 ]
+        then
+                echo "$TASKS $APPNAME tasks in queue:" $(ls /usr/bin/nwogatewaybot/tasks | head -n 3) "" and $((TASKS-3)) more
+        else
+                if [ "$TASKS" -gt 0 ]
+                then
+                        if [ "$TASKS" -eq 1 ]
+                        then
+                                echo "$TASKS $APPNAME task in queue:" $(ls /usr/bin/nwogatewaybot/tasks | head -n 3)
+                        else
+                                echo "$TASKS $APPNAME tasks in queue:" $(ls /usr/bin/nwogatewaybot/tasks | head -n 3)
+                        fi
+                else
+                        echo "0 $APPNAME tasks in queue"
+                fi
+        fi
+}
+
+clear(){
+        TASKS=`ls -l /usr/bin/$APPNAME/tasks | tail -n +2 | wc -l`
+        if [ "$TASKS" -gt 0 ]
+        then
+                rm /usr/bin/$APPNAME/tasks/*
+                if [ "$TASKS" -eq 1 ]
+                then
+                        echo "$TASKS $APPNAME task removed"
+                else
+                        echo "$TASKS $APPNAME tasks removed"
+                fi
+        else
+                echo "0 $APPNAME tasks in queue"
+        fi
+}
+
+case "$1" in
+        start)
+                start
+        ;;
+        stop)
+                stop
+        ;;
+        restart)
+                stop
+                start
+        ;;
+        status)
+                status
+        ;;
+        clear)
+                clear
+        ;;
+        *)
+                echo "Usage: $APPNAME {start|stop|restart|status|clear}"
+                exit 1
+    ;;
+esac
+
+exit 0

@@ -1,0 +1,24 @@
+<?php
+
+/*
+if(!defined('STDIN')){
+	die();
+}
+
+$O = '<h5 class="text-muted text-left">Update: <span class=text-info>__UPDATE__</span></h5>';
+
+$data = $gateway-> get('Client_REQUESTID', array(
+	'id'		=>	'SUBREQID',
+	'params'	=>	array(),
+), 'Proxy_RESPONSEID');
+//var_dump($data);
+
+foreach($data->container->SOMETHING as $SOMETHING_id => $SOMETHING){
+	$O .= 'HTML& ' .$SOMETHING->SOMETHING2 .' &whatever<br>';
+}
+
+$O = str_replace('__UPDATE__', date('d.m.Y H:i'), $O);
+file_put_contents('/path/to/file.cch', $O);
+*/
+
+?>

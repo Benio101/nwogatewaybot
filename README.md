@@ -34,18 +34,18 @@ Pull the following files into their responding directories:
 edit `/usr/bin/nwogatewaybot/gateway.cfg` configuration file.
 
 ## Usage
-`service nwogatewaybot start|stop|restart`
+* `service nwogatewaybot start|stop|restart`
 start|stop|restart the nwogatewaybot<br>
-`service nwogatewaybot status`
+* `service nwogatewaybot status`
 show if bot is running and how many tasks are in queue<br>
-`service nwogatewaybot clear`
+* `service nwogatewaybot clear`
 clear all tasks
 
 ## Description
-Bot itself works as a daemon run from `/etc/init.d/nwogatewaybot`, with `/var/run/nwogatewaybot.pid` pid, as a `/usr/bin/nwogatewaybot/nwogatewaybot.php`.<br>
-Bot uses `/usr/bin/nwogatewaybot/gateway.php` class and initializes `socket.io` connection with gateway address from `/usr/bin/nwogatewaybot/gateway.cfg` `$nwo_address` at `$nwo_character`@`$nwo_account` account using `$nwo_password` password.<br>
-If Account Guard asks for a pin, login to `$gmail_login`@`gmail.com` occurs with `$gmail_password` password to the `{imap.gmail.com:993/imap/ssl}INBOX` imap and pin is automatically red and submitted.<br>
-Finally, bot loops, refreshing connection every 20 seconds and sending `Client_Heartbeat` every 60s to keep `socket.io` connection up. Every second, all `/usr/bin/nwogatewaybot/tasks/*` tasks are executed if correct, and then always deleted, even if broken.
+1. Bot itself works as a daemon run from `/etc/init.d/nwogatewaybot`, with `/var/run/nwogatewaybot.pid` pid, as a `/usr/bin/nwogatewaybot/nwogatewaybot.php`.<br>
+2. Bot uses `/usr/bin/nwogatewaybot/gateway.php` class and initializes `socket.io` connection with gateway address from `/usr/bin/nwogatewaybot/gateway.cfg` `$nwo_address` at `$nwo_character`@`$nwo_account` account using `$nwo_password` password.<br>
+3. If Account Guard asks for a pin, login to `$gmail_login`@`gmail.com` occurs with `$gmail_password` password to the `{imap.gmail.com:993/imap/ssl}INBOX` imap and pin is automatically red and submitted.<br>
+4. Finally, bot loops, refreshing connection every 20 seconds and sending `Client_Heartbeat` every 60s to keep `socket.io` connection up. Every second, all `/usr/bin/nwogatewaybot/tasks/*` tasks are executed if correct, and then always deleted, even if broken.
 
 ## Tasks
 Tasks should be made every rational time interval.
@@ -59,14 +59,15 @@ Let's make a `/home/nwostatus/foo.task.php` file.
 
 ### crontabbing the task
 To crontab the task, `cp /path/to/source/TASKNAME.task.php` to the `/usr/bin/nwogatewaybot/tasks`, renaming the task to the `ddd-taskname` where `ddd` is a prioroty number and `taskname` is a name of task.<br>
+
 The lower `ddd` number, the higher prioroty, because tasks are executed ASCII alphabetically.<br>
 It is strongly recommended to follow the `ddd-taskname` markup and to use the priority reasonably.<br>
-Ex. important, weekly task should remain low numbered (like `001-weekly` or so), dailies should remain about `100`+, hourlies `300`+ and minuties `600`+.<br>
-It is also recommended not to overwrite any task until its done.<br>
 
-Example for `foo.task.php` being executed 27 minutes past every hour with a `050` priority:
+Ex. important, weekly task should remain low numbered (like `001-weekly` or so), dailies should remain about `100`+, hourlies `300`+ and minuties `600`+. It is also recommended not to overwrite any task until its done.<br>
+
+Example for `foo.task.php` being executed 27 minutes past every hour with a `950` priority:
 ```
-27  *  * * *   cd /usr/bin/nwogatewaybot && ([ -e tasks/foo.task.php ] || cp /home/nwostatus/foo.task.php tasks/050-foo)
+27  *  * * *   cd /usr/bin/nwogatewaybot && ([ -e tasks/foo.task.php ] || cp /home/nwostatus/foo.task.php tasks/950-foo)
 ```
 
 ## Task PHP code
@@ -94,7 +95,7 @@ we shall see the
 5:::{"name":"Client_RequestExchangeAccountData","args":[{"id":"ACCOUNTID","params":{}}]}
 ```
 request payload, where `ACCOUNTID` is an account id.<br>
-With the foillowing response:
+With the following response:
 ```
 5:::{name: "Proxy_ExchangeAccountData", args: [{id: "ACCOUNTID",…}]}
 ```
@@ -212,10 +213,11 @@ in another PHP, stable file.
 Task files are [syntax checked](https://github.com/Benio101/nwogatewaybot/blob/master/usr/bin/nwogatewaybot/nwogatewaybot.php#L28) before execution. Disable syntax checking if neccesary.
 
 ### Eval is evil, but have a cute tail
-Task files `eval('?>' .file_get_contents($task))`ed to make the daemon running even if task crashed upon executing. To enable deep debugging, change `eval` to [`include`](https://github.com/Benio101/nwogatewaybot/blob/master/usr/bin/nwogatewaybot/nwogatewaybot.php#L31).
+Task files are `eval('?>' .file_get_contents($task))`ed to make the daemon running even if task crashed upon executing. To enable deep debugging, change `eval` to [`include`](https://github.com/Benio101/nwogatewaybot/blob/master/usr/bin/nwogatewaybot/nwogatewaybot.php#L31).
 
 ### Hang fix
 If some task lasts infinitelly:
+
 1. `service nwogatewaybot stop`
 2. `service nwogatewaybot clear` to clear the tasks (including the corrupted one)
 3. fix the task, eventually manually copying them to execute immediately after bot starts

@@ -1,0 +1,2 @@
+# nwogatewaybot
+Neverwinter gateway bot

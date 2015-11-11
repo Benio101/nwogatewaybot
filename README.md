@@ -1,3 +1,4 @@
+![Logo](http://benio.me/art/res/nwogatewaybot/nwogatewaybot.png)
 # nwogatewaybot
 PHP–based Neverwinter gateway bot — daemon service to get data from Neverwinter [gateway](http://gateway.playneverwinter.com).
 
